@@ -42,13 +42,6 @@ import SwiftUI
                                     "You Make Me Smile!",
                                     "When the Genius Bar Needs Help, They Call You"]
                     
-                    // generate a random messageNumber to use as an index
-                    // if messageNumber == lastMessageNumber {
-                    //    keep generating a new random messageNumber
-                    //    until you get a messageNumber != lastMessageNumber
-                    // set messageString to message[messageNumber]
-                    // update the lastMessageNumber with messageNumber
-                    
                     var messageNumber : Int
                     repeat {
                         messageNumber = Int.random(in: 0...messages.count-1)

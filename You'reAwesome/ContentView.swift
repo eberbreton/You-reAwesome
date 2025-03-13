@@ -15,6 +15,7 @@ struct ContentView: View {
     @State private var lastImageNumber = -1
     @State private var lastSoundNumber = -1
     @State private var audioPlayer: AVAudioPlayer!
+    @State private var soundIsOn = true
     let numberOfImages = 10 // images labeled image0 - image9
     let numberOfSounds = 6 // sounds labled sound0 - sound5
     
@@ -41,25 +42,41 @@ struct ContentView: View {
             
             Spacer()
             
-            Button("Show Message"){
-                let messages = ["You Are Awesome!",
-                                "You Are Great",
-                                "You Are Fantastic!",
-                                "Fabulous? That's You!",
-                                "You Make Me Smile!",
-                                "When the Genius Bar Needs Help, They Call You"]
+            HStack {
+                Text("Sound On:")
+                Toggle("Sound On:", isOn: $soundIsOn)
+                    .labelsHidden()
+                    .onChange(of: soundIsOn) {
+                        if audioPlayer != nil && audioPlayer.isPlaying {
+                            audioPlayer.stop()
+                        }
+                    }
                 
-                lastMessageNumber = nonRepeatingRandom(lastNubmer: lastMessageNumber, upperBound: messages.count-1)
-                message = messages[lastMessageNumber]
                 
-                lastImageNumber = nonRepeatingRandom(lastNubmer: lastImageNumber, upperBound: numberOfImages-1)
-                imageName = "image\(lastImageNumber)"
+                Spacer()
                 
-                lastSoundNumber = nonRepeatingRandom(lastNubmer: lastSoundNumber, upperBound: numberOfSounds-1)
-                playSound(soundName:  "sound\(lastSoundNumber)")
+                Button("Show Message"){
+                    let messages = ["You Are Awesome!",
+                                    "You Are Great",
+                                    "You Are Fantastic!",
+                                    "Fabulous? That's You!",
+                                    "You Make Me Smile!",
+                                    "When the Genius Bar Needs Help, They Call You"]
+                    
+                    lastMessageNumber = nonRepeatingRandom(lastNubmer: lastMessageNumber, upperBound: messages.count-1)
+                    message = messages[lastMessageNumber]
+                    
+                    lastImageNumber = nonRepeatingRandom(lastNubmer: lastImageNumber, upperBound: numberOfImages-1)
+                    imageName = "image\(lastImageNumber)"
+                    
+                    lastSoundNumber = nonRepeatingRandom(lastNubmer: lastSoundNumber, upperBound: numberOfSounds-1)
+                    if soundIsOn {
+                        playSound(soundName:  "sound\(lastSoundNumber)")
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .font(.title2)
             }
-            .buttonStyle(.borderedProminent)
-            .font(.title2)
             
         }
         .padding()
@@ -75,6 +92,9 @@ struct ContentView: View {
     }
     
     func playSound (soundName: String) {
+        if audioPlayer != nil && audioPlayer.isPlaying {
+            audioPlayer.stop()
+        }
         guard let soundFile = NSDataAsset(name: soundName) else {
             print("😡 Could not read file named\(soundName)")
             return
